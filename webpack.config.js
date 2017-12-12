@@ -21,11 +21,11 @@ module.exports = ({ production }) => {
     },
     resolveLoader: {
       alias: {
-        'css-loader': require.resolve('css-loader'),
-        'source-loader': require.resolve('source-loader'),
-        'reshape-loader': require.resolve('reshape-loader'),
         'babel-loader': require.resolve('babel-loader'),
-        'postcss-loader': require.resolve('postcss-loader')
+        'css-loader': require.resolve('css-loader'),
+        'postcss-loader': require.resolve('postcss-loader'),
+        'file-loader': require.resolve('file-loader')
+        'reshape-loader': require.resolve('reshape-loader'),
       }
     },
     module: {
