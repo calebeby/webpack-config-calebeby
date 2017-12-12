@@ -24,7 +24,7 @@ module.exports = ({ production }) => {
         'babel-loader': require.resolve('babel-loader'),
         'css-loader': require.resolve('css-loader'),
         'postcss-loader': require.resolve('postcss-loader'),
-        'file-loader': require.resolve('file-loader')
+        'file-loader': require.resolve('file-loader'),
         'reshape-loader': require.resolve('reshape-loader'),
       }
     },
