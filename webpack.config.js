@@ -1,5 +1,5 @@
 const path = require('path')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const ExtractTextPlugin = require('es6-extract-text-webpack-plugin')
 const BabelMinifyPlugin = require('babel-minify-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
@@ -8,13 +8,14 @@ const globby = require('globby')
 const root = process.cwd()
 const src = path.join(root, 'src')
 
+const htmlFiles = globby
+  .sync(['*.sgr', '*.html'], { cwd: src })
+  .map(f => `./${f}`)
+
 module.exports = ({ production }) => {
   const config = {
     devtool: production ? false : 'source-map',
-    entry: [
-      './index.js',
-      ...globby.sync(['*.sgr', '*.html'], { cwd: src }).map(f => `./${f}`)
-    ],
+    entry: ['./index.js', ...htmlFiles],
     context: path.resolve(root, 'src'),
     resolve: {
       extensions: ['.js', '.sss']
@@ -25,7 +26,7 @@ module.exports = ({ production }) => {
         'css-loader': require.resolve('css-loader'),
         'postcss-loader': require.resolve('postcss-loader'),
         'file-loader': require.resolve('file-loader'),
-        'reshape-loader': require.resolve('reshape-loader'),
+        'reshape-loader': require.resolve('reshape-loader')
       }
     },
     module: {

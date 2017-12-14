@@ -4,6 +4,11 @@ const symbols = require('log-symbols')
 
 const printStats = (err, s) => {
   const stats = s.toJson()
+
+  require('fs').writeFile('stats.json', JSON.stringify(stats), err => {
+    err && console.error(err)
+  })
+
   if (s.hasErrors()) {
     const output = stats.errors.reduce((out, error) => {
       const [filename, ...rest] = error.split('\n')
@@ -16,7 +21,6 @@ ${rest.join('\n')}
     }, '')
     console.log(output)
   }
-  require('fs').writeFileSync('stats.json', JSON.stringify(stats))
   const output = stats.assets.reduce((out, asset) => {
     const size = asset.isOverSizeLimit
       ? chalk.keyword('orange')(prettyBytes(asset.size))
@@ -30,8 +34,6 @@ ${chalk.bold(size)} ${asset.name} ${chunks}`
     )
   }, '')
   console.log(output)
-
-  require('fs').writeFileSync('stats.json', JSON.stringify(stats))
 }
 
 module.exports = printStats
