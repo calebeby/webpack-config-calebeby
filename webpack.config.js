@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 const ExtractTextPlugin = require('es6-extract-text-webpack-plugin')
 const BabelMinifyPlugin = require('babel-minify-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -12,14 +13,12 @@ const htmlFiles = globby
   .sync(['*.sgr', '*.html'], { cwd: src })
   .map(f => `./${f}`)
 
-module.exports = ({ production }) => {
+const baseConfig = ({ production }, { input, output, copy = [] }) => {
   const config = {
     devtool: production ? false : 'source-map',
-    entry: ['./index.js', ...htmlFiles],
     context: path.resolve(root, 'src'),
-    resolve: {
-      extensions: ['.js', '.sss']
-    },
+    entry: input,
+    resolve: { extensions: ['.js', '.sss'] },
     resolveLoader: {
       alias: {
         'babel-loader': require.resolve('babel-loader'),
@@ -67,7 +66,10 @@ module.exports = ({ production }) => {
             },
             {
               loader: 'reshape-loader',
-              options: require('./reshape.config')({ production, sugar: false })
+              options: require('./reshape.config')({
+                production,
+                sugar: false
+              })
             }
           ]
         },
@@ -82,7 +84,10 @@ module.exports = ({ production }) => {
             },
             {
               loader: 'reshape-loader',
-              options: require('./reshape.config')({ production, sugar: true })
+              options: require('./reshape.config')({
+                production,
+                sugar: true
+              })
             }
           ]
         }
@@ -91,7 +96,28 @@ module.exports = ({ production }) => {
     plugins: [
       new webpack.optimize.ModuleConcatenationPlugin(),
       new ExtractTextPlugin('styles.css'),
-      new CopyWebpackPlugin([
+      new CopyWebpackPlugin(copy)
+    ],
+    output: {
+      path: path.resolve(root, 'build'),
+      filename: output
+    },
+    stats: 'verbose'
+  }
+
+  if (production) {
+    config.plugins.push(new BabelMinifyPlugin({}, { comments: false }))
+  }
+  return config
+}
+
+module.exports = ({ production }) => {
+  const mainConfig = baseConfig(
+    { production },
+    {
+      input: ['./index.js', ...htmlFiles],
+      output: 'scripts.js',
+      copy: [
         { from: path.join(root, '_redirects') },
         { from: path.join(root, '_headers') },
         {
@@ -99,16 +125,22 @@ module.exports = ({ production }) => {
           to: 'favicon.ico'
         },
         { from: path.join(root, 'src', 'assets'), to: 'assets' }
-      ])
-    ],
-    output: {
-      path: path.resolve(root, 'build'),
-      filename: 'scripts.js'
-    },
-    stats: 'verbose'
+      ]
+    }
+  )
+
+  const config = [mainConfig]
+
+  if (fs.existsSync(path.resolve(root, 'src', 'sw.js'))) {
+    const swConfig = baseConfig(
+      { production },
+      {
+        input: ['./sw.js'],
+        output: 'sw.js'
+      }
+    )
+    config.push(swConfig)
   }
-  if (production) {
-    config.plugins.push(new BabelMinifyPlugin({}, { comments: false }))
-  }
+
   return config
 }
