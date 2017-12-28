@@ -5,9 +5,7 @@ const symbols = require('log-symbols')
 const printStats = (err, s) => {
   const stats = s.toJson()
 
-  require('fs').writeFileSync('stats.json', JSON.stringify(stats), err => {
-    err && console.error(err)
-  })
+  require('fs').writeFileSync('stats.json', JSON.stringify(stats))
 
   stats.children.forEach(child => {
     const output = child.assets.reduce((out, asset) => {
