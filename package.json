@@ -34,6 +34,8 @@
     "spike-css-standards": "^3.0.0",
     "sugarml": "^0.6.0",
     "sugarss": "^1.0.1",
+    "ts-loader": "^3.2.0",
+    "typescript": "^2.6.2",
     "webpack": "^3.9.1"
   },
   "bin": {
@@ -42,5 +44,8 @@
   "prettier": {
     "singleQuote": true,
     "semi": false
+  },
+  "devDependencies": {
+    "typings-for-css-modules-loader": "^1.7.0"
   }
 }

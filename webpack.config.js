@@ -18,14 +18,17 @@ const baseConfig = ({ production }, { input, output, copy = [] }) => {
     devtool: production ? false : 'source-map',
     context: path.resolve(root, 'src'),
     entry: input,
-    resolve: { extensions: ['.js', '.sss'] },
+    resolve: { extensions: ['.js', '.sss', '.ts', '.tsx'] },
     resolveLoader: {
       alias: {
         'babel-loader': require.resolve('babel-loader'),
-        'css-loader': require.resolve('css-loader'),
+        'typings-for-css-modules-loader': require.resolve(
+          'typings-for-css-modules-loader'
+        ),
         'postcss-loader': require.resolve('postcss-loader'),
         'file-loader': require.resolve('file-loader'),
-        'reshape-loader': require.resolve('reshape-loader')
+        'reshape-loader': require.resolve('reshape-loader'),
+        'ts-loader': require.resolve('ts-loader')
       }
     },
     module: {
@@ -37,12 +40,25 @@ const baseConfig = ({ production }, { input, output, copy = [] }) => {
           options: require('./babel.config')({ production })
         },
         {
+          test: /\.tsx?$/,
+          use: [
+            {
+              loader: 'babel-loader',
+              options: require('./babel.config')({ production })
+            },
+            {
+              loader: 'ts-loader'
+            }
+          ]
+        },
+        {
           test: /\.sss$/,
           use: ExtractTextPlugin.extract({
             use: [
               {
-                loader: 'css-loader',
+                loader: 'typings-for-css-modules-loader',
                 options: {
+                  namedExport: true,
                   modules: true,
                   localIdentName: '[local]-[hash:base64:4]',
                   camelCase: true
@@ -96,7 +112,8 @@ const baseConfig = ({ production }, { input, output, copy = [] }) => {
     plugins: [
       new webpack.optimize.ModuleConcatenationPlugin(),
       new ExtractTextPlugin('styles.css'),
-      new CopyWebpackPlugin(copy)
+      new CopyWebpackPlugin(copy),
+      new webpack.WatchIgnorePlugin([/sss\.d\.ts$/])
     ],
     output: {
       path: path.resolve(root, 'build'),
@@ -115,7 +132,7 @@ module.exports = ({ production }) => {
   const mainConfig = baseConfig(
     { production },
     {
-      input: ['./index.js', ...htmlFiles],
+      input: ['./index.tsx', ...htmlFiles],
       output: 'scripts.js',
       copy: [
         { from: path.join(root, '_redirects') },
@@ -131,7 +148,16 @@ module.exports = ({ production }) => {
 
   const config = [mainConfig]
 
-  if (fs.existsSync(path.resolve(root, 'src', 'sw.js'))) {
+  if (fs.existsSync(path.resolve(root, 'src', 'sw.ts'))) {
+    const swConfig = baseConfig(
+      { production },
+      {
+        input: ['./sw.ts'],
+        output: 'sw.js'
+      }
+    )
+    config.push(swConfig)
+  } else if (fs.existsSync(path.resolve(root, 'src', 'sw.js'))) {
     const swConfig = baseConfig(
       { production },
       {
