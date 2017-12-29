@@ -132,7 +132,12 @@ module.exports = ({ production }) => {
   const mainConfig = baseConfig(
     { production },
     {
-      input: ['./index.tsx', ...htmlFiles],
+      input: [
+        fs.existsSync(path.resolve(root, 'src', 'index.tsx'))
+          ? './index.tsx'
+          : './index.js',
+        ...htmlFiles
+      ],
       output: 'scripts.js',
       copy: [
         { from: path.join(root, '_redirects') },
