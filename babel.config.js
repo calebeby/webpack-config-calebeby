@@ -1,3 +1,5 @@
+const browsers = require('./browserlist.config')
+
 module.exports = ({ production }) => ({
   presets: [
     [
@@ -5,9 +7,7 @@ module.exports = ({ production }) => ({
       {
         loose: true,
         modules: false,
-        targets: {
-          browsers: '> 1% in US'
-        },
+        targets: { browsers },
         exclude: ['transform-regenerator']
       }
     ],

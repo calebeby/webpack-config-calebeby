@@ -26,6 +26,8 @@
     "html-loader": "^0.5.1",
     "log-symbols": "^2.1.0",
     "meow": "^4.0.0",
+    "postcss-calc": "^6.0.1",
+    "postcss-css-variables": "^0.8.0",
     "postcss-loader": "^2.0.9",
     "pretty-bytes": "^4.0.2",
     "reshape-loader": "^1.1.0",
