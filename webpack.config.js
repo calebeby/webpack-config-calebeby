@@ -142,6 +142,7 @@ module.exports = ({ production }) => {
       copy: [
         { from: path.join(root, '_redirects') },
         { from: path.join(root, '_headers') },
+        { from: path.join(root, 'manifest.json') },
         {
           from: path.join(root, 'src', 'assets', 'favicon.ico'),
           to: 'favicon.ico'
