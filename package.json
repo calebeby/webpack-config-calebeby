@@ -1,6 +1,6 @@
 {
   "name": "webpack-config-calebeby",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "description": "Reusable config for webpack",
   "main": "index.js",
   "repository": "https://github.com/calebeby/webpack-config-calebeby",
