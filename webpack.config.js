@@ -64,7 +64,7 @@ const baseConfig = (
                 options: {
                   namedExport: true,
                   modules: true,
-                  localIdentName: '[local]-[hash:base64:4]',
+                  localIdentName: '[local]',
                   camelCase: true
                 }
               },
