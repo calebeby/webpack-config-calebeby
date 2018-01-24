@@ -13,9 +13,13 @@ const htmlFiles = globby
   .sync(['*.sgr', '*.html'], { cwd: src })
   .map(f => `./${f}`)
 
-const baseConfig = ({ production }, { input, output, copy = [] }) => {
+const baseConfig = (
+  { production, electron },
+  { input, output, copy = [], target }
+) => {
   const config = {
     devtool: production ? false : 'source-map',
+    target: target || electron ? 'electron-renderer' : 'web',
     context: path.resolve(root, 'src'),
     entry: input,
     resolve: { extensions: ['.js', '.sss', '.ts', '.tsx'] },
@@ -112,7 +116,7 @@ const baseConfig = ({ production }, { input, output, copy = [] }) => {
     plugins: [
       new webpack.optimize.ModuleConcatenationPlugin(),
       new ExtractTextPlugin('styles.css'),
-      new CopyWebpackPlugin(copy),
+      new CopyWebpackPlugin(copy.filter(f => fs.existsSync(f))),
       new webpack.WatchIgnorePlugin([/sss\.d\.ts$/])
     ],
     output: {
@@ -128,9 +132,9 @@ const baseConfig = ({ production }, { input, output, copy = [] }) => {
   return config
 }
 
-module.exports = ({ production }) => {
+module.exports = ({ production, electron }) => {
   const mainConfig = baseConfig(
-    { production },
+    { production, electron },
     {
       input: [
         fs.existsSync(path.resolve(root, 'src', 'index.tsx'))
@@ -172,6 +176,24 @@ module.exports = ({ production }) => {
       }
     )
     config.push(swConfig)
+  }
+
+  if (electron) {
+    config.push(
+      baseConfig(
+        { production, electron },
+        {
+          input: [
+            fs.existsSync(path.resolve(root, 'src', 'main.ts'))
+              ? './main.ts'
+              : './main.js',
+            ...htmlFiles
+          ],
+          output: 'main.js',
+          target: 'electron-main'
+        }
+      )
+    )
   }
 
   return config

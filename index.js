@@ -19,8 +19,10 @@ const production = watch
   ? cli.flags.production !== undefined
   : cli.flags.development === undefined
 
+const electron = cli.flags.electron !== undefined
+
 if (watch) {
-  require('./watch')({ production })
+  require('./watch')({ production, electron })
 } else {
-  require('./build')({ production })
+  require('./build')({ production, electron })
 }
