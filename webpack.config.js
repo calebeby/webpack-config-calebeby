@@ -179,20 +179,18 @@ module.exports = ({ production, electron }) => {
   }
 
   if (electron) {
-    config.push(
-      baseConfig(
-        { production, electron },
-        {
-          input: [
-            fs.existsSync(path.resolve(root, 'src', 'main.ts'))
-              ? './main.ts'
-              : './main.js',
-            ...htmlFiles
-          ],
-          output: 'main.js',
-          target: 'electron-main'
-        }
-      )
+    config.electron = baseConfig(
+      { production, electron },
+      {
+        input: [
+          fs.existsSync(path.resolve(root, 'src', 'main.ts'))
+            ? './main.ts'
+            : './main.js',
+          ...htmlFiles
+        ],
+        output: 'main.js',
+        target: 'electron-main'
+      }
     )
   }
 
