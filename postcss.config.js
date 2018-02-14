@@ -5,4 +5,10 @@ const calc = require('postcss-calc')
 const browsers = require('./browserlist.config')
 
 module.exports = ({ production }) =>
-  cssStandards({ parser: sugarss, minify: true, appendPlugins: [vars, calc], autoprefixer: browsers })
+  cssStandards({
+    parser: sugarss,
+    minify: true,
+    appendPlugins: [vars, calc],
+    autoprefixer: browsers,
+    cssnano: { zindex: false }
+  })
