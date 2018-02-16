@@ -26,9 +26,7 @@ const baseConfig = (
     resolveLoader: {
       alias: {
         'babel-loader': require.resolve('babel-loader'),
-        'typings-for-css-modules-loader': require.resolve(
-          'typings-for-css-modules-loader'
-        ),
+        'css-loader': require.resolve('css-loader'),
         'postcss-loader': require.resolve('postcss-loader'),
         'file-loader': require.resolve('file-loader'),
         'reshape-loader': require.resolve('reshape-loader'),
@@ -60,9 +58,8 @@ const baseConfig = (
           use: ExtractTextPlugin.extract({
             use: [
               {
-                loader: 'typings-for-css-modules-loader',
+                loader: 'css-loader',
                 options: {
-                  namedExport: true,
                   modules: true,
                   localIdentName: '[local]',
                   camelCase: true
